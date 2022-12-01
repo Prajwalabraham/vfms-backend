@@ -14,7 +14,7 @@ const pool = new Pool({
     host: process.env.PGHOST,
     database: process.env.PGDATABASE,
     port: process.env.PGPORT,
-    password: 'jehovah1'
+    password: process.env.PGPASSWORD
   });
   
   pool.connect();
@@ -23,7 +23,7 @@ const pool = new Pool({
     console.log('Database Connected');
   });
 
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+//app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -34,10 +34,11 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/app', routeurls)
 
-app.get('*', (req, res) => {
+/*app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
-
+*/
 app.listen(4000,() => console.log("server is up and running"))
+alert("server is up")
 
 
