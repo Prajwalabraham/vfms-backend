@@ -62,11 +62,25 @@ router.post("/verify", async (req, res) => {
       res.status(201).send("Verified")
     }
   })
-  
-  
-
  
 });
+
+
+router.post("/main_volunteers", async (req, res) => {
+  const {name,
+    team,
+    phone,
+    email} = req.body;
+
+    pool.query('INSERT INTO main_volunteers (name, team, phone, email) VALUES ($1, $2, $3, $4) RETURNING *', [name, team, phone, email], (error, results) => {
+      if (error) {
+        throw error
+      }
+      res.status(201).send("Successfully Submitted")
+    })
+ 
+});
+
 
 
 
