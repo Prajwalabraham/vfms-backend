@@ -81,12 +81,13 @@ router.post("/main_volunteers", async (req, res) => {
  
 });
 
-router.post("/signup", async (req, res) => {
+/*router.post("/signup", async (req, res) => {
   const {username,
     email,
     password} = req.body;
+    console.log(username+password+email);
 
-    pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *', [name, email, password], (error, results) => {
+    pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *', [username, email, password], (error, results) => {
       if (error) {
         throw error
       }
@@ -110,7 +111,7 @@ router.post("/login", async (req, res) => {
     })
  
 });
-
+*/
 
 
 
