@@ -2,8 +2,8 @@ POST https://vfms-backend.onrender.com/main_volunteers
 Content-Type: application/json
 
 {
-"name":"amulya",
+"name":"aishwarya",
 "team":"greeters",
-"phone": "7022496002",
-"email": "prajwal@gmail.com"
+"phone": "7828267319",
+"email": "aishu@gmail.com"
 }

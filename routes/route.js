@@ -50,7 +50,7 @@ router.post("/verify", async (req, res) => {
 
     else{
 
-      pool.query('UPDATE food_preference SET taken = true WHERE phone =$1', [phone], (error, results) => {
+      pool.query('UPDATE food_preference SET taken = true WHERE phone=$1', [phone], (error, results) => {
         if (error) {
           throw error
         }
@@ -77,6 +77,36 @@ router.post("/main_volunteers", async (req, res) => {
         throw error
       }
       res.status(201).send("Successfully Submitted")
+    })
+ 
+});
+
+router.post("/signup", async (req, res) => {
+  const {username,
+    email,
+    password} = req.body;
+
+    pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *', [name, email, password], (error, results) => {
+      if (error) {
+        throw error
+      }
+      res.status(201).send("Successfully Signed Up!")
+    })
+ 
+});
+
+router.post("/login", async (req, res) => {
+  const {email,
+    password} = req.body;
+
+    const loginSql = "SELECT * FROM users WHERE email = $1 AND password = $2"
+    pool.query(loginSql, [email, password], (error, results) => {
+      if (error) {
+        throw error
+      }
+
+      email = results.rows[0].email;
+      res.status(201).json(email)
     })
  
 });
