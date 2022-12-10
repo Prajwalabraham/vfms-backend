@@ -21,12 +21,7 @@ const pool = new Pool({
   pool.connect();
 
   pool.on('connect', () => {
-    try {
-      console.log('Database Connected');  
-    } catch (error) {
-      next(error)
-    }
-    
+    console.log('Database Connected');
   });
 
 //app.use(express.static(path.resolve(__dirname, '../client/build')));
