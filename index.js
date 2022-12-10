@@ -28,9 +28,10 @@ const pool = new Pool({
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 app.use(routeurls);
 app.use(express.json({ type: 'application/vnd.api+json' }));
-app.use(cors());
+
     
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/app', routeurls)

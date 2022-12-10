@@ -34,6 +34,7 @@ router.post("/foodPreference", async (req, res) => {
       }
       }) 
 });
+
 router.post("/verify", async (req, res) => {
   const {name,
     phone,
