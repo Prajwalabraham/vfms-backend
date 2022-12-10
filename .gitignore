@@ -8,6 +8,11 @@
 # testing
 /coverage
 /package-lock.json
+/foodPreference.http
+/login.http
+/main_volunteers.http
+/verify.http
+/viewKitchen.http
 
 # production
 /build
