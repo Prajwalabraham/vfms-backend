@@ -10,7 +10,12 @@ const path = require('path');
 dotenv.config()
 
 const pool = new Pool({
-   conString: process.env.PGCONNECTIONSTRING
+   user: process.env.PGUSER,
+   password: process.env.PGPASSWORD,
+   host: process.env.PGHOST,
+   database: process.env.PGDATABASE,
+   port: process.env.PGPORT,
+
   });
   
   pool.connect();
