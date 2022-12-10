@@ -1,8 +1,0 @@
-POST http://localhost:4000/app/foodPreference
-Content-Type: application/json
-
-{
-"name":"prajwal",
-"phone": "9901561857",
-"preference":"NON-VEG"
-}
