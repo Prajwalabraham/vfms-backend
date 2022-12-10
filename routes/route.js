@@ -9,7 +9,7 @@ router.post("/foodPreference", async (req, res) => {
       const { name,
         phone,
         preference} = req.body;
-      
+      const createdDate = new Date()
       let team;
       let volunteerName;
       const sql = "SELECT * FROM main_volunteers WHERE phone = $1"
@@ -25,7 +25,7 @@ router.post("/foodPreference", async (req, res) => {
         
 
         //Query results being put in the food_preference DB.
-        pool.query('INSERT INTO food_preference (name, phone, preference, team) VALUES ($1, $2, $3, $4) RETURNING *', [volunteerName, phone, preference, team], (error, results) => {
+        pool.query('INSERT INTO food_preference (name, phone, preference, team, date) VALUES ($1, $2, $3, $4, $5) RETURNING *', [volunteerName, phone, preference, team, createdDate], (error, results) => {
           if (error) {
             throw error
           }
