@@ -81,6 +81,32 @@ router.post("/main_volunteers", async (req, res) => {
  
 });
 
+
+router.post("/viewKitchen", async (req, res) => {
+    const nonVeg = 'NON-VEG'
+    const veg = 'VEG'
+    let nonVegCount
+    let vegCount
+    pool.query('SELECT COUNT(preference) FROM food_preference WHERE preference=$1 UNION SELECT COUNT(preference) FROM food_preference WHERE preference=$2 ',[nonVeg, veg], (error, results) => {
+      if (error) {
+        throw error
+      }
+      
+      nonVegCount = results.rows[1].count;
+      vegCount = results.rows[0].count;
+      const count = {
+        nonVegCount, vegCount
+      }
+      console.log(count); 
+      
+      res.status(201).send(count)
+    })
+ 
+});
+
+
+
+
 /*router.post("/signup", async (req, res) => {
   const {username,
     email,
