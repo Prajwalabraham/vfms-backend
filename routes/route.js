@@ -137,6 +137,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   const {email,
     password} = req.body;
+    let Email 
 
     const loginSql = "SELECT * FROM users WHERE email = $1 AND password = $2"
     pool.query(loginSql, [email, password], (error, results) => {
@@ -144,8 +145,9 @@ router.post("/login", async (req, res) => {
         throw error
       }
 
-      email = results.rows[0].email;
-      res.status(200).json(email)
+      Email = results.rows[0].email;
+      console.log(Email);
+      res.status(200).json(Email)
     })
  
 });
