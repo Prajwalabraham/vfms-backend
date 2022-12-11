@@ -144,10 +144,7 @@ router.post("/login", async (req, res) => {
       if (error) {
         throw error
       }
-
-      Email = results.rows[0].email;
-      console.log(Email);
-      res.status(200).json(Email)
+      res.status(200).send("")
     })
  
 });
