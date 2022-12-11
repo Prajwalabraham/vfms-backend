@@ -10,8 +10,6 @@ router.post("/foodPreference", async (req, res) => {
         phone,
         preference} = req.body;
       const createdDate = new Date()
-      const rangeDate = new Date()
-      let rangeDay=rangeDate.getDate()
       let team;
       let volunteerName;
       const sql = "SELECT * FROM main_volunteers WHERE phone = $1"
@@ -23,14 +21,14 @@ router.post("/foodPreference", async (req, res) => {
         //console.log(results.rows[0].team);
         team = results.rows[0].team;
         volunteerName=results.rows[0].name; 
-        //Data for name and team obtained from main_volunteers when userPhone==main_volunteers.phone
-        pool.query("SELECT EXISTS(SELECT * FROM food_preference WHERE phone=$1 AND date < NOW() - INTERVAL '7 days')", [phone], (error, results)=>{
+        pool.query("SELECT EXISTS(SELECT * FROM food_preference WHERE phone=$1 AND date > NOW() - INTERVAL '7 days')", [phone], (error, results)=>{
        
-        if(results.rows[0].exists == 'true'){ 
+        if(results.rows[0].exists){ 
           //Query results being put in the food_preference DB.
           res.status(406).send("Duplicate")
           console.log(results.rows[0].exists);
         }
+        
         else{
           pool.query('INSERT INTO food_preference (name, phone, preference, team, date) VALUES ($1, $2, $3, $4, $5) RETURNING *', [volunteerName, phone, preference, team, createdDate], (error, results) => {
             if (error) {
@@ -38,7 +36,10 @@ router.post("/foodPreference", async (req, res) => {
             }
             res.status(201).send("Successfully Submitted")
           })
+          
+          console.log(results.rows[0].exists);
         }
+        
         })
 
     }
