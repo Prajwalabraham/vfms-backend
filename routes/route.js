@@ -124,6 +124,15 @@ router.post("/signup", async (req, res) => {
     email,
     password} = req.body;
     console.log(username+password+email);
+    
+    const  data  =  await pool.query(`SELECT * FROM users WHERE email= $1;`, [email]); //Checking if user already exists
+    const  arr  =  data.rows;
+    if (arr.length  !=  0) {
+    return  res.status(400).json({
+    error: "Email already there, No need to register again.",
+    });
+  }
+  else{
 
     pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *', [username, email, password], (error, results) => {
       if (error) {
@@ -131,22 +140,30 @@ router.post("/signup", async (req, res) => {
       }
       res.status(201).send("Successfully Signed Up!")
     })
- 
+  }
 });
 
 router.post("/login", async (req, res) => {
   const {email,
     password} = req.body;
-    let Email 
-
+    
+    const data = await pool.query(`SELECT * FROM users WHERE email= $1;`, [email]) //Verifying if the user exists in the database
+    const user = data.rows;
+    if (user.length === 0) {
+    res.status(400).json({
+    error: "User is not registered, Sign Up first",
+    });
+    }
+    else{
     const loginSql = "SELECT * FROM users WHERE email = $1 AND password = $2"
     pool.query(loginSql, [email, password], (error, results) => {
       if (error) {
         throw error
       }
+      console.log(results);
       res.status(200).send("")
     })
- 
+  }
 });
 
 
