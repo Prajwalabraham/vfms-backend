@@ -134,6 +134,36 @@ router.post("/viewKitchen", async (req, res) => {
 });
 
 
+router.post("/viewDetailedKitchen", async (req, res) => {
+  const nonVeg = 'NON-VEG'
+  const veg = 'VEG'
+  let nonVegCount
+  let vegCount
+  const team = 'greeters'
+  const dt = new Date()    
+  const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
+  const startDate = new Date( dt.setDate(startWeek))
+  const endDate = new Date()
+  const greetersSql = "SELECT (SELECT COUNT(preference) FROM food_preference WHERE preference=$1 AND date BETWEEN $3 AND $4 AND team = $5) AS NonVegCount, (SELECT COUNT(preference) FROM food_preference WHERE preference=$2 AND date BETWEEN $3 AND $4 AND team=$5 ) AS vegCount, (SELECT COUNT(preference) FROM food_preference WHERE preference=$1 AND taken = true AND date BETWEEN $3 AND $4 AND team=$5) AS verifiedNV,( SELECT COUNT(preference) FROM food_preference WHERE preference=$2 AND taken = true AND date BETWEEN $3 AND $4 AND team=$5)AS verifiedV"
+  try {
+    await pool.query('BEGIN')
+    pool.query(viewSql,[nonVeg, veg, startDate, endDate, team], (error, results) => {
+      if (error) {
+        throw error
+      }
+      console.log(results);
+       
+    })
+    
+  } catch (error) {
+    
+  }
+  
+
+
+});
+
+
 
 
 router.post("/signup", async (req, res) => {
