@@ -91,12 +91,22 @@ router.post("/main_volunteers", async (req, res) => {
     phone,
     email} = req.body;
 
-    pool.query('INSERT INTO main_volunteers (name, team, phone, email) VALUES ($1, $2, $3, $4) RETURNING *', [name, team, phone, email], (error, results) => {
-      if (error) {
-        throw error
+    pool.query('SELECT EXISTS(SELECT * FROM main_volunteers WHERE phone=$1 OR email=$2)', [phone, email], (error, results) => {
+      if(results.rows[0].exists){ 
+        res.status(406).send("Duplicate")
+        console.log(results.rows[0].exists);
       }
-      res.status(201).send("Successfully Submitted")
+      else{
+        pool.query('INSERT INTO main_volunteers (name, team, phone, email) VALUES ($1, $2, $3, $4) RETURNING *', [name, team, phone, email], (error, results) => {
+          if (error) {
+            throw error
+          }
+          res.status(201).send("Successfully Submitted")
+        })
+      }
     })
+
+  
  
 });
 
