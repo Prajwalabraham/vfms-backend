@@ -16,13 +16,11 @@ router.post("/foodPreference", async (req, res) => {
       const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
       const startDate = new Date( dt.setDate(startWeek))
       const endDate = new Date()
-      const sql = "SELECT * FROM main_volunteers WHERE phone = $1"
+      const sql = "SELECT EXISTS(SELECT * FROM main_volunteers WHERE phone = $1)"
       pool.query(sql, [phone], (error, results) => {
-        if(error){
-          res.write("Your phone number isn't Recorded");
-        }
-        else{
+        if(results.rows[0].exists){
         //console.log(results.rows[0].team);
+        pool.query("SELECT * FROM main_volunteers WHERE phone = $1", [phone], (error, results) => {
         console.log(startDate);
         team = results.rows[0].team;
         volunteerName=results.rows[0].name; 
@@ -45,8 +43,13 @@ router.post("/foodPreference", async (req, res) => {
         }
         
         })
+          
+      })
 
-    }
+      }
+      else{
+        res.status(403).send("Redirect to /QR");
+      }
       }) 
 });
 
