@@ -190,8 +190,7 @@ router.post("/signup", async (req, res) => {
         res.status(400).json({
           error: "User is already registered"
         })
-      }
-    }); //Checking if user already exists
+      }//Checking if user already exists
   else{
 
     pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3)', [username, email, password], (error, results) => {
@@ -201,6 +200,7 @@ router.post("/signup", async (req, res) => {
       res.status(201).send("Successfully Signed Up!")
     })
   }
+  }); 
 });
 
 router.post("/login", async (req, res) => {
