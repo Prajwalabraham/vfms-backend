@@ -54,9 +54,10 @@ router.post("/foodPreference", async (req, res) => {
 });
 
 router.post("/verify", async (req, res) => {
-  const {name,
-    phone,
-    email} = req.body;
+  const name = req.body.state.name
+  const email = req.body.state.email
+  const phone = req.body.state.phone
+  const team = req.body.team
   
     const dt = new Date()    
     const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
@@ -64,14 +65,9 @@ router.post("/verify", async (req, res) => {
     const endDate = new Date()
     console.log(phone);
 
-  const sql = "SELECT * FROM food_preference WHERE phone = $1 AND date BETWEEN $2 AND $3 "
+  const sql = "SELECT EXISTS(SELECT * FROM food_preference WHERE phone = $1 AND date BETWEEN $2 AND $3 )"
   pool.query(sql, [phone, startWeek, endWeek], (error, results)=>{
-    if (error) {
-      throw error;
-    }
-
-    else{
-
+    if (results.rows[0].exists) {
       pool.query('UPDATE food_preference SET taken = true WHERE phone=$1 AND date BETWEEN $4 AND $3', [phone, startWeek, endWeek], (error, results) => {
         if (error) {
           throw error
@@ -83,16 +79,21 @@ router.post("/verify", async (req, res) => {
 
       res.status(201).send("Verified")
     }
+
+    else{
+      res.status(400).send("Data Not Found!!")
+    }
   })
  
 });
 
 
 router.post("/main_volunteers", async (req, res) => {
-  const {name,
-    team,
-    phone,
-    email} = req.body;
+  const name = req.body.state.name
+  const email = req.body.state.email
+  const phone = req.body.state.phone
+  const team = req.body.team
+  console.log(name, email,phone,team);  
 
     pool.query('SELECT EXISTS(SELECT * FROM main_volunteers WHERE phone=$1 OR email=$2)', [phone, email], (error, results) => {
       if(results.rows[0].exists){ 
@@ -183,18 +184,17 @@ router.post("/signup", async (req, res) => {
   const {username,
     email,
     password} = req.body;
-    console.log(username+password+email);
-    
-    const  data  =  await pool.query(`SELECT * FROM users WHERE email= $1;`, [email]); //Checking if user already exists
-    const  arr  =  data.rows;
-    if (arr.length  !=  0) {
-    return  res.status(400).json({
-    error: "Email already there, No need to register again.",
-    });
-  }
+
+    pool.query("SELECT EXSISTS(SELECT * FROM users WHERE email= $1)", [email], (error ,results) => {
+      if (result.rows[0].exists) {
+        res.status(400).json({
+          error: "User is already registered"
+        })
+      }
+    }); //Checking if user already exists
   else{
 
-    pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *', [username, email, password], (error, results) => {
+    pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3)', [username, email, password], (error, results) => {
       if (error) {
         throw error
       }
@@ -207,23 +207,21 @@ router.post("/login", async (req, res) => {
   const {email,
     password} = req.body;
     
-    const data = await pool.query(`SELECT * FROM users WHERE email= $1;`, [email]) //Verifying if the user exists in the database
-    const user = data.rows;
-    if (user.length === 0) {
-    res.status(400).json({
-    error: "User is not registered, Sign Up first",
-    });
-    }
-    else{
-    const loginSql = "SELECT * FROM users WHERE email = $1 AND password = $2"
-    pool.query(loginSql, [email, password], (error, results) => {
-      if (error) {
-        throw error
+    pool.query("SELECT EXISTS(SELECT * FROM users WHERE email= $1)", [email], (error, results) => {
+      if(results.rows[0].exists){ 
+        const loginSql = "SELECT * FROM users WHERE email = $1 AND password = $2"
+        pool.query(loginSql, [email, password], (error, results) => {
+          if (error) {
+            throw error
+          }
+          console.log(results);
+          res.status(200).send("")
+        })
       }
-      console.log(results);
-      res.status(200).send("")
-    })
-  }
+      else{
+        res.status(401).send("User Doesn't exists")
+      } 
+    }) //Verifying if the user exists in the database
 });
 
 
