@@ -185,8 +185,8 @@ router.post("/signup", async (req, res) => {
     email,
     password} = req.body;
 
-    pool.query("SELECT EXSISTS(SELECT * FROM users WHERE email= $1)", [email], (error ,results) => {
-      if (result.rows[0].exists) {
+    pool.query("SELECT EXISTS(SELECT * FROM users WHERE email= $1)", [email], (error ,results) => {
+      if (results.rows[0].exists) {
         res.status(400).json({
           error: "User is already registered"
         })
@@ -214,8 +214,21 @@ router.post("/login", async (req, res) => {
           if (error) {
             throw error
           }
+          else if (results.rowCount != 0) {
           console.log(results);
+          if (results.rows[0].email==email && results.rows[0].password==password) {
+            
           res.status(200).send("")
+          }
+          else{
+            console.log(error);
+          }
+          }
+          
+          else{
+
+            res.status(403).send("Email or Password Incorrect")
+          }
         })
       }
       else{
