@@ -63,21 +63,29 @@ router.post("/verify", async (req, res) => {
     const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
     const startDate = new Date( dt.setDate(startWeek))
     const endDate = new Date()
-    console.log(phone);
 
-  const sql = "SELECT EXISTS(SELECT * FROM food_preference WHERE phone = $1 AND date BETWEEN $2 AND $3 )"
-  pool.query(sql, [phone, startWeek, endWeek], (error, results)=>{
-    if (results.rows[0].exists) {
-      pool.query('UPDATE food_preference SET taken = true WHERE phone=$1 AND date BETWEEN $4 AND $3', [phone, startWeek, endWeek], (error, results) => {
-        if (error) {
-          throw error
+  const sql = "SELECT * FROM food_preference WHERE phone = $1 AND date BETWEEN $2 AND $3"
+  pool.query(sql, [phone, startDate, endDate], (error, results)=>{
+    if (results.rows[0]) {
+      const resName = results.rows[0].name
+      const resTaken = results.rows[0].taken
+      const resPreference = results.rows[0].preference
+      const resTeam = results.rows[0].team
+      pool.query('SELECT EXISTS(SELECT * FROM food_preference WHERE phone=$1 AND taken = true AND date BETWEEN $2 AND $3)', [phone, startDate,endDate], (error, results) => {
+        if (results.rows[0].exists) {
+          res.status(401).json({resName, resTaken, resPreference, resTeam})
         }
-        console.log("Done");
+        else{
+        pool.query('UPDATE food_preference SET taken = true WHERE phone=$1 AND date BETWEEN $2 AND $3', [phone, startDate, endDate], (error, results) => {
+          if (error) {
+            throw error
+          }
+            console.log(results);
+            res.status(201).json({resName, resTaken, resPreference, resTeam})
+        })
+      }
       })
-
-
-
-      res.status(201).send("Verified")
+      
     }
 
     else{
