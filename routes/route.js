@@ -12,6 +12,7 @@ router.post("/foodPreference", async (req, res) => {
       const createdDate = new Date()
       let team;
       let volunteerName;
+      const taken = false
       const dt = new Date()    
       const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
       const startDate = new Date( dt.setDate(startWeek))
@@ -32,14 +33,13 @@ router.post("/foodPreference", async (req, res) => {
         }
         
         else{
-          pool.query('INSERT INTO food_preference (name, phone, preference, team, date) VALUES ($1, $2, $3, $4, $5) RETURNING *', [volunteerName, phone, preference, team, createdDate], (error, results) => {
+          pool.query('INSERT INTO food_preference (name, phone, preference, team, taken, date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [volunteerName, phone, preference, team, taken, createdDate], (error, results) => {
             if (error) {
               console.log(error);
             }
             res.status(201).send("Successfully Submitted")
           })
           
-          console.log(results.rows[0].exists);
         }
         
         })
@@ -156,7 +156,7 @@ router.post("/viewKitchen", async (req, res) => {
 });
 
 
-router.post("/viewDetailedKitchen", async (req, res) => {
+router.get("/viewDetailedKitchen", async (req, res) => {
   const nonVeg = 'NON-VEG'
   const veg = 'VEG'
   let nonVegCount
@@ -166,19 +166,20 @@ router.post("/viewDetailedKitchen", async (req, res) => {
   const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
   const startDate = new Date( dt.setDate(startWeek))
   const endDate = new Date()
-  const greetersSql = "SELECT (SELECT COUNT(preference) FROM food_preference WHERE preference=$1 AND date BETWEEN $3 AND $4 AND team = $5) AS NonVegCount, (SELECT COUNT(preference) FROM food_preference WHERE preference=$2 AND date BETWEEN $3 AND $4 AND team=$5 ) AS vegCount, (SELECT COUNT(preference) FROM food_preference WHERE preference=$1 AND taken = true AND date BETWEEN $3 AND $4 AND team=$5) AS verifiedNV,( SELECT COUNT(preference) FROM food_preference WHERE preference=$2 AND taken = true AND date BETWEEN $3 AND $4 AND team=$5)AS verifiedV"
+  const greetersSql = "SELECT * FROM food_preference WHERE date BETWEEN $1 AND $2"
   try {
     await pool.query('BEGIN')
-    pool.query(viewSql,[nonVeg, veg, startDate, endDate, team], (error, results) => {
+    pool.query(greetersSql,[startDate, endDate], (error, results) => {
       if (error) {
         throw error
       }
       console.log(results);
+      res.status(200).json(results)
        
     })
     
   } catch (error) {
-    
+    console.log(error);
   }
   
 
