@@ -132,25 +132,13 @@ router.post("/viewKitchen", async (req, res) => {
     const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
     const startDate = new Date( dt.setDate(startWeek))
     const endDate = new Date()
-    const viewSql = "SELECT (SELECT COUNT(preference) FROM food_preference WHERE preference=$1 AND date BETWEEN $3 AND $4) AS NonVegCount, (SELECT COUNT(preference) FROM food_preference WHERE preference=$2 AND date BETWEEN $3 AND $4) AS vegCount, (SELECT COUNT(preference) FROM food_preference WHERE preference=$1 AND taken = true AND date BETWEEN $3 AND $4) AS verifiedNV,( SELECT COUNT(preference) FROM food_preference WHERE preference=$2 AND taken = true AND date BETWEEN $3 AND $4)AS verifiedV"
-    pool.query(viewSql,[nonVeg, veg, startDate, endDate], (error, results) => {
+    const viewSql = "SELECT * FROM food_preference WHERE date BETWEEN $1 AND $2"
+    pool.query(viewSql,[startDate, endDate], (error, results) => {
       if (error) {
         throw error
       }
-      nonVegCount = results.rows[0].nonvegcount;
-      vegCount = results.rows[0].vegcount
-      recNonVeg = results.rows[0].verifiednv
-      recVeg = results.rows[0].verifiedv
-
-     
-      
-      const count = {
-        nonVegCount, vegCount, recNonVeg, recVeg
-      }
       console.log(results);
-       
-      console.log(count);
-      res.status(200).send(count)
+      res.status(200).send(results)
     })
  
 });
