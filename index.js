@@ -6,6 +6,16 @@ const dotenv = require('dotenv');
 const routeurls = require('./routes/route');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs')
+const https = require('https')
+
+const key = fs.readFileSync('./private.key')
+const cert = fs.readFileSync('./certificate.crt')
+
+const cred = {
+  key,
+  cert
+}
 
 dotenv.config()
 
@@ -47,3 +57,5 @@ app.use('/app', routeurls)
 app.listen(process.env.PORT || 4000,() => console.log("server is up and running ", process.env.PORT))
 
 
+const httpsServer = https.createServer(cred, app)
+httpsServer.listen(8443)

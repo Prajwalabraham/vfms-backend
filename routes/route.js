@@ -3,6 +3,8 @@ const express = require('express')
 const router = express.Router() 
 const pool = require('../config/db');
 
+
+
 router.post("/foodPreference", async (req, res) => {
 
       // Get user input
@@ -235,10 +237,9 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/", async(req, res) => {
-  const msg = {
-    msg: "Your server running correctly"
-  }
-  res.send(200).json(msg)
+  res.status(200).send("okkkkkkkkkkkkkkkkkk")
 })
+
+
 
 module.exports = router
