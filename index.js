@@ -44,6 +44,6 @@ app.use('/app', routeurls)
   res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
 */
-app.listen(process.env.PORT || 4000,() => console.log("server is up and running"))
+app.listen(process.env.PORT || 4000,() => console.log("server is up and running ", process.env.PORT))
 
 
