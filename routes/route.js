@@ -234,6 +234,8 @@ router.post("/login", async (req, res) => {
     }) //Verifying if the user exists in the database
 });
 
-
+router.get("/", async(req, res) => {
+  res.send(200).json("Your server is working perfectly")
+})
 
 module.exports = router
