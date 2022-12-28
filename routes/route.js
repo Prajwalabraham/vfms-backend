@@ -235,7 +235,10 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/", async(req, res) => {
-  res.send(200).json("Your server is working perfectly")
+  const msg = {
+    msg: "Your server running correctly"
+  }
+  res.send(200).json(msg)
 })
 
 module.exports = router
