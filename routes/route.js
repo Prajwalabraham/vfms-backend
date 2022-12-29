@@ -56,10 +56,9 @@ router.post("/foodPreference", async (req, res) => {
 });
 
 router.post("/verify", async (req, res) => {
-  const name = req.body.state.name
-  const email = req.body.state.email
+
   const phone = req.body.state.phone
-  const team = req.body.team
+  
   
     const dt = new Date()    
     const startWeek = dt.getDate() - dt.getDay() + (dt.getDay() === 0 ? -6 : 1)
