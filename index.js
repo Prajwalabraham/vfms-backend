@@ -40,14 +40,13 @@ const pool = new Pool({
 
 //app.use(express.static(path.resolve(__dirname, '../client/build')));
 
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 app.use(routeurls);
 app.use(express.json({ type: 'application/vnd.api+json' }));
-
-    
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/app', routeurls)
 
 /*app.get('*', (req, res) => {
